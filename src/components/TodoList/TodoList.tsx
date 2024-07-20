@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Todo } from '../../model';
 import { MdDelete } from "react-icons/md";
 import { FaUndo } from "react-icons/fa";
@@ -14,6 +14,7 @@ interface Props {
 export const TodoList: React.FC<Props> = ({ toDos, setToDos }) => {
   const [editId, setEditId] = useState<number | null>(null);
   const [newText, setNewText] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleToggleDone = (id: number) => {
     setToDos(toDos.map(todo => todo.id === id ? { ...todo, isDone: !todo.isDone } : todo));
@@ -38,6 +39,12 @@ export const TodoList: React.FC<Props> = ({ toDos, setToDos }) => {
     setNewText("");
   };
 
+  useEffect(() => {
+    if (editId !== null && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editId]);
+
   return (
     <div className="todo-list w-full max-w-screen-sm p-5">
       {toDos.map(todo => (
@@ -54,6 +61,7 @@ export const TodoList: React.FC<Props> = ({ toDos, setToDos }) => {
               type="text"
               value={newText}
               onChange={handleChange}
+              ref={inputRef}
             />
           ) : (
             <span
